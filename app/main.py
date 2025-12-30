@@ -1,12 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import auth, babies, activities, caregivers, insights
-import os
 
 # Create app
 app = FastAPI(title="BabyCare API", version="1.0.0")
 
-# CORS
+# CORS 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,6 +24,3 @@ app.include_router(insights.router)
 @app.get("/")
 async def root():
     return {"message": "BabyCare API is running"}
-
-# Handler for Vercel
-handler = app
