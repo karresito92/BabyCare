@@ -1,33 +1,21 @@
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.utils import formataddr
 import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email, To, Content
 from dotenv import load_dotenv
 
-# Cargar variables de entorno
 load_dotenv()
 
-# Configuración de email desde variables de entorno
-SMTP_HOST = os.getenv("SMTP_HOST")
-SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
-SMTP_USER = os.getenv("SMTP_USER")
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
-SMTP_FROM = os.getenv("SMTP_FROM")
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+SMTP_FROM = os.getenv("SMTP_FROM", "babycaretfg@gmail.com")
 SMTP_FROM_NAME = os.getenv("SMTP_FROM_NAME", "BabyCare")
 
 
 def send_reset_password_email(email: str, token: str, user_name: str = None):
     """
-    Envía un email con el código para restablecer la contraseña
+    Envía un email con el código para restablecer la contraseña usando SendGrid
     """
-    # Crear mensaje
-    message = MIMEMultipart("alternative")
-    message["From"] = formataddr((SMTP_FROM_NAME, SMTP_FROM))
-    message["To"] = email
-    message["Subject"] = "Recupera tu contraseña - BabyCare"
     
-    # Versión texto plano
+    # Contenido del email en texto plano
     text_body = f"""
 Hola{' ' + user_name if user_name else ''},
 
@@ -47,7 +35,7 @@ Saludos,
 El equipo de BabyCare
     """
     
-    # Versión HTML (más bonita)
+    # Contenido del email en HTML
     html_body = f"""
 <!DOCTYPE html>
 <html>
@@ -111,21 +99,24 @@ El equipo de BabyCare
 </html>
     """
     
-    # Adjuntar ambas versiones
-    part1 = MIMEText(text_body, "plain", "utf-8")
-    part2 = MIMEText(html_body, "html", "utf-8")
-    message.attach(part1)
-    message.attach(part2)
-    
-    # Enviar email
     try:
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-            server.starttls()  # Seguridad TLS
-            server.login(SMTP_USER, SMTP_PASSWORD)
-            server.send_message(message)
+        message = Mail(
+            from_email=Email(SMTP_FROM, SMTP_FROM_NAME),
+            to_emails=To(email),
+            subject="Recupera tu contraseña - BabyCare",
+            plain_text_content=Content("text/plain", text_body),
+            html_content=Content("text/html", html_body)
+        )
+        
+        sg = SendGridAPIClient(SENDGRID_API_KEY)
+        response = sg.send(message)
+        
+        print(f"✅ Email enviado exitosamente a {email}")
+        print(f"Status code: {response.status_code}")
+        
         return True
     except Exception as e:
-        print(f"Error al enviar email: {str(e)}")
+        print(f"❌ Error al enviar email: {str(e)}")
         raise Exception(f"Error al enviar email: {str(e)}")
 
 
@@ -133,11 +124,6 @@ def send_password_changed_confirmation(email: str, user_name: str = None):
     """
     Envía un email de confirmación cuando la contraseña fue cambiada exitosamente
     """
-    message = MIMEMultipart("alternative")
-    message["From"] = formataddr((SMTP_FROM_NAME, SMTP_FROM))
-    message["To"] = email
-    message["Subject"] = "Tu contraseña ha sido cambiada - BabyCare"
-    
     text_body = f"""
 Hola{' ' + user_name if user_name else ''},
 
@@ -189,17 +175,20 @@ El equipo de BabyCare
 </html>
     """
     
-    part1 = MIMEText(text_body, "plain", "utf-8")
-    part2 = MIMEText(html_body, "html", "utf-8")
-    message.attach(part1)
-    message.attach(part2)
-    
     try:
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-            server.starttls()
-            server.login(SMTP_USER, SMTP_PASSWORD)
-            server.send_message(message)
+        message = Mail(
+            from_email=Email(SMTP_FROM, SMTP_FROM_NAME),
+            to_emails=To(email),
+            subject="Tu contraseña ha sido cambiada - BabyCare",
+            plain_text_content=Content("text/plain", text_body),
+            html_content=Content("text/html", html_body)
+        )
+        
+        sg = SendGridAPIClient(SENDGRID_API_KEY)
+        response = sg.send(message)
+        
+        print(f"✅ Email de confirmación enviado a {email}")
         return True
     except Exception as e:
-        print(f"Error al enviar email: {str(e)}")
+        print(f"❌ Error al enviar email de confirmación: {str(e)}")
         raise Exception(f"Error al enviar email: {str(e)}")
