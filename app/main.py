@@ -24,3 +24,9 @@ app.include_router(insights.router)
 @app.get("/")
 async def root():
     return {"message": "BabyCare API is running"}
+
+@app.get("/health")
+@app.head("/health")
+async def health_check():
+    """Simple health check endpoint that responds to both GET and HEAD requests"""
+    return {"status": "ok", "service": "BabyCare API"}
