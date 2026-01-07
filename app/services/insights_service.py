@@ -11,6 +11,12 @@ class InsightsService:
     def __init__(self, db: Session):
         self.db = db
     
+    def _make_aware(self, dt: datetime) -> datetime:
+        """Convert naive datetime to aware datetime with UTC timezone"""
+        if dt.tzinfo is None:
+            return dt.replace(tzinfo=timezone.utc)
+        return dt
+    
     def generate_insights(self, baby_id: int, days: int = 14) -> Dict[str, Any]:
         """Generate insights and recommendations for a baby"""
         end_date = datetime.now(timezone.utc)
@@ -73,7 +79,7 @@ class InsightsService:
             # Group by hour
             hours_count = {}
             for activity in sleep_activities:
-                hour = activity.timestamp.hour
+                hour = self._make_aware(activity.timestamp).hour
                 duration = activity.data.get('duration_hours', 0) if activity.data else 0
                 if hour not in hours_count:
                     hours_count[hour] = []
@@ -94,7 +100,9 @@ class InsightsService:
             feeding_activities.sort(key=lambda x: x.timestamp)
             intervals = []
             for i in range(1, len(feeding_activities)):
-                diff = (feeding_activities[i].timestamp - feeding_activities[i-1].timestamp).total_seconds() / 3600
+                ts1 = self._make_aware(feeding_activities[i-1].timestamp)
+                ts2 = self._make_aware(feeding_activities[i].timestamp)
+                diff = (ts2 - ts1).total_seconds() / 3600
                 intervals.append(diff)
             
             if intervals:
@@ -139,7 +147,8 @@ class InsightsService:
         
         # Check last feeding
         last_feeding = max(feeding_activities, key=lambda x: x.timestamp)
-        hours_since = (datetime.now(timezone.utc) - last_feeding.timestamp).total_seconds() / 3600
+        last_timestamp = self._make_aware(last_feeding.timestamp)
+        hours_since = (datetime.now(timezone.utc) - last_timestamp).total_seconds() / 3600
         
         if hours_since > 4:
             alerts.append({
@@ -151,8 +160,14 @@ class InsightsService:
         
         # Compare with previous period
         mid_point = datetime.now(timezone.utc) - timedelta(days=days/2)
-        recent_feedings = [a for a in feeding_activities if a.timestamp >= mid_point]
-        old_feedings = [a for a in feeding_activities if a.timestamp < mid_point]
+        recent_feedings = [
+            a for a in feeding_activities 
+            if self._make_aware(a.timestamp) >= mid_point
+        ]
+        old_feedings = [
+            a for a in feeding_activities 
+            if self._make_aware(a.timestamp) < mid_point
+        ]
         
         if old_feedings and recent_feedings:
             recent_avg = len(recent_feedings) / (days/2)
