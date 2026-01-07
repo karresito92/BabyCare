@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import auth, babies, activities, caregivers, insights
-
+from fastapi.staticfiles import StaticFiles
 # Create app
 app = FastAPI(title="BabyCare API", version="1.0.0")
 
@@ -30,3 +30,5 @@ async def root():
 async def health_check():
     """Simple health check endpoint that responds to both GET and HEAD requests"""
     return {"status": "ok", "service": "BabyCare API"}
+
+app.mount("/", StaticFiles(directory="frontend_dist", html=True), name="static")
