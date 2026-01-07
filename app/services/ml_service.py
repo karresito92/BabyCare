@@ -27,6 +27,13 @@ def clean_numpy(data):
     return data
 
 
+def make_aware(dt: datetime) -> datetime:
+    """Convert naive datetime to aware datetime with UTC timezone"""
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
 class MLService:
     """Machine Learning service for baby care predictions"""
     
@@ -45,7 +52,9 @@ class MLService:
         
         intervals = []
         for i in range(1, len(feeding_activities)):
-            diff = (feeding_activities[i].timestamp - feeding_activities[i-1].timestamp).total_seconds() / 3600
+            ts1 = make_aware(feeding_activities[i-1].timestamp)
+            ts2 = make_aware(feeding_activities[i].timestamp)
+            diff = (ts2 - ts1).total_seconds() / 3600
             intervals.append(diff)
         
         if not intervals:
@@ -54,10 +63,10 @@ class MLService:
         avg_interval = np.mean(intervals)
         std_interval = np.std(intervals) if len(intervals) > 1 else 0
         
-        last_feeding = feeding_activities[-1].timestamp
-        hours_since = (datetime.now(timezone.utc) - last_feeding).total_seconds() / 3600
+        last_feeding_ts = make_aware(feeding_activities[-1].timestamp)
+        hours_since = (datetime.now(timezone.utc) - last_feeding_ts).total_seconds() / 3600
         
-        predicted_next = last_feeding + timedelta(hours=avg_interval)
+        predicted_next = last_feeding_ts + timedelta(hours=avg_interval)
         hours_until = (predicted_next - datetime.now(timezone.utc)).total_seconds() / 3600
         
         confidence = max(0, min(100, 100 - (std_interval * 10)))
@@ -87,7 +96,8 @@ class MLService:
         
         features = []
         for activity in feeding_activities:
-            hour = activity.timestamp.hour
+            ts = make_aware(activity.timestamp)
+            hour = ts.hour
             quantity = activity.data.get('quantity_ml', 150) if activity.data else 150
             features.append([hour, quantity])
         
@@ -100,9 +110,10 @@ class MLService:
         for i, pred in enumerate(predictions):
             if pred == -1:
                 activity = feeding_activities[i]
+                ts = make_aware(activity.timestamp)
                 anomalies.append({
-                    "timestamp": activity.timestamp.isoformat(),
-                    "hour": activity.timestamp.hour,
+                    "timestamp": ts.isoformat(),
+                    "hour": ts.hour,
                     "quantity_ml": activity.data.get('quantity_ml') if activity.data else None,
                     "reason": "Patrón inusual detectado por ML"
                 })
@@ -138,8 +149,9 @@ class MLService:
         
         avg_duration = np.mean(durations)
         total_sleep = sum(durations)
-        days = max(1, (max([a.timestamp for a in sleep_activities]) - 
-                       min([a.timestamp for a in sleep_activities])).days + 1)
+        
+        timestamps = [make_aware(a.timestamp) for a in sleep_activities]
+        days = max(1, (max(timestamps) - min(timestamps)).days + 1)
         sleep_per_day = total_sleep / days
         
         if sleep_per_day >= 12 and avg_duration >= 2:
@@ -186,7 +198,8 @@ class MLService:
         y = []
         for activity in sleep_activities:
             if activity.data and 'duration_hours' in activity.data:
-                hour = activity.timestamp.hour
+                ts = make_aware(activity.timestamp)
+                hour = ts.hour
                 duration = activity.data['duration_hours']
                 X.append([hour])
                 y.append(duration)
@@ -232,11 +245,13 @@ class MLService:
             if not activity.data or 'quantity_ml' not in activity.data:
                 continue
             
-            hour = activity.timestamp.hour
-            day_of_week = activity.timestamp.weekday()
+            ts = make_aware(activity.timestamp)
+            hour = ts.hour
+            day_of_week = ts.weekday()
             
             if i > 0:
-                hours_since_last = (activity.timestamp - feeding_activities[i-1].timestamp).total_seconds() / 3600
+                ts_prev = make_aware(feeding_activities[i-1].timestamp)
+                hours_since_last = (ts - ts_prev).total_seconds() / 3600
             else:
                 hours_since_last = 3.0
             
@@ -256,8 +271,8 @@ class MLService:
         current_day = datetime.now(timezone.utc).weekday()
         
         if feeding_activities:
-            last_feeding = max(feeding_activities, key=lambda x: x.timestamp)
-            hours_since = (datetime.now(timezone.utc) - last_feeding.timestamp).total_seconds() / 3600
+            last_feeding_ts = make_aware(max(feeding_activities, key=lambda x: x.timestamp).timestamp)
+            hours_since = (datetime.now(timezone.utc) - last_feeding_ts).total_seconds() / 3600
         else:
             hours_since = 3.0
         
@@ -278,6 +293,7 @@ class MLService:
             "model_score": round(score, 2)
         }
         return clean_numpy(result)
+    
     @staticmethod
     def identify_routine_clusters(activities: List[Activity]) -> Dict[str, Any]:
         """Identify daily routine patterns using K-Means clustering"""
@@ -289,7 +305,8 @@ class MLService:
         
         daily_patterns = {}
         for activity in activities:
-            date_key = activity.timestamp.date()
+            ts = make_aware(activity.timestamp)
+            date_key = ts.date()
             if date_key not in daily_patterns:
                 daily_patterns[date_key] = {
                     'feeding_count': 0,
@@ -385,7 +402,8 @@ class MLService:
         daily_data = {}
         
         for activity in feeding_activities:
-            date_key = activity.timestamp.date()
+            ts = make_aware(activity.timestamp)
+            date_key = ts.date()
             if date_key not in daily_data:
                 daily_data[date_key] = {'feeding_count': 0, 'feeding_amount': 0, 'sleep_hours': 0}
             daily_data[date_key]['feeding_count'] += 1
@@ -393,7 +411,8 @@ class MLService:
                 daily_data[date_key]['feeding_amount'] += activity.data['quantity_ml']
         
         for activity in sleep_activities:
-            date_key = activity.timestamp.date()
+            ts = make_aware(activity.timestamp)
+            date_key = ts.date()
             if date_key not in daily_data:
                 daily_data[date_key] = {'feeding_count': 0, 'feeding_amount': 0, 'sleep_hours': 0}
             if activity.data:
@@ -460,7 +479,9 @@ class MLService:
         diaper_activities.sort(key=lambda x: x.timestamp)
         intervals = []
         for i in range(1, len(diaper_activities)):
-            hours = (diaper_activities[i].timestamp - diaper_activities[i-1].timestamp).total_seconds() / 3600
+            ts1 = make_aware(diaper_activities[i-1].timestamp)
+            ts2 = make_aware(diaper_activities[i].timestamp)
+            hours = (ts2 - ts1).total_seconds() / 3600
             intervals.append(hours)
         
         if not intervals:
@@ -470,7 +491,7 @@ class MLService:
         std_interval = np.std(intervals) if len(intervals) > 1 else 0
         
         last_diaper = diaper_activities[-1]
-        last_diaper_time = last_diaper.timestamp
+        last_diaper_time = make_aware(last_diaper.timestamp)
         hours_since = (datetime.now(timezone.utc) - last_diaper_time).total_seconds() / 3600
         
         predicted_next = last_diaper_time + timedelta(hours=avg_interval)
@@ -503,7 +524,8 @@ class MLService:
         
         daily_counts = {}
         for activity in activities:
-            date_key = activity.timestamp.date()
+            ts = make_aware(activity.timestamp)
+            date_key = ts.date()
             if date_key not in daily_counts:
                 daily_counts[date_key] = {'feeding': 0, 'sleep_hours': 0, 'diaper': 0}
             
