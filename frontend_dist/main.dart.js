@@ -45915,7 +45915,7 @@ $0(){this.a.w=!1},
 $S:0}
 A.ayR.prototype={
 $3(a,b,c){var s=null,r=A.T(28),q=A.b([new A.bb(-5,B.M,B.n.aW(0.3),B.lI,25)],t.V)
-return A.FE(A.aa(s,A.aIZ("images/logo.png",B.n0,80,80),B.j,s,s,new A.a6(B.e,s,s,r,q,s,B.q),s,s,s,s,B.ac,s,s,s),b)},
+return A.FE(A.aa(s,A.aIZ("assets/images/logo.png",B.n0,80,80),B.j,s,s,new A.a6(B.e,s,s,r,q,s,B.q),s,s,s,s,B.ac,s,s,s),b)},
 $S:56}
 A.ayS.prototype={
 $1(a){return B.kx.hE(0,a)},
@@ -46154,7 +46154,7 @@ return null},
 $S:0}
 A.aAW.prototype={
 $3(a,b,c){var s=null,r=A.T(28),q=A.b([new A.bb(-5,B.M,B.n.aW(0.3),B.lI,25)],t.V)
-return A.FE(A.aa(s,A.aIZ("images/logo.png",B.n0,80,80),B.j,s,s,new A.a6(B.e,s,s,r,q,s,B.q),s,s,s,s,B.ac,s,s,s),b)},
+return A.FE(A.aa(s,A.aIZ("assets/images/logo.png",B.n0,80,80),B.j,s,s,new A.a6(B.e,s,s,r,q,s,B.q),s,s,s,s,B.ac,s,s,s),b)},
 $S:56}
 A.aAX.prototype={
 $1(a){return B.kx.hE(0,a)},
