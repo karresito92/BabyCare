@@ -39,7 +39,7 @@ class NumberedCanvas(canvas.Canvas):
         # Footer con número de página
         self.setFont('Helvetica', 9)
         self.setFillColor(colors.grey)
-        page_num = f"Pagina {self._pageNumber} de {page_count}"
+        page_num = f"Página {self._pageNumber} de {page_count}"
         self.drawRightString(A4[0] - 2*cm, 1.5*cm, page_num)
         
         # Logo/Marca BabyCare
@@ -122,7 +122,7 @@ def generate_pediatric_report(baby: Baby, activities: List[Activity], start_date
     story.append(Spacer(1, 2*cm))
     
     # Título principal con diseño moderno
-    story.append(Paragraph("INFORME PEDIATRICO", title_style))
+    story.append(Paragraph("INFORME PEDIÁTRICO", title_style))
     story.append(Paragraph("Registro de Cuidado Infantil", subtitle_style))
     
     # Caja decorativa con información del bebé
@@ -137,11 +137,11 @@ def generate_pediatric_report(baby: Baby, activities: List[Activity], start_date
     
     age_str = ""
     if years > 0:
-        age_str += f"{years} ano{'s' if years > 1 else ''} "
+        age_str += f"{years} año{'s' if years > 1 else ''} "
     if months > 0:
         age_str += f"{months} mes{'es' if months > 1 else ''} "
     if days > 0 or age_str == "":
-        age_str += f"{days} dia{'s' if days != 1 else ''}"
+        age_str += f"{days} día{'s' if days != 1 else ''}"
     
     # Información del paciente en caja destacada
     patient_info = [
@@ -152,7 +152,7 @@ def generate_pediatric_report(baby: Baby, activities: List[Activity], start_date
         ["Nombre:", baby.name],
         ["Fecha de nacimiento:", baby.birth_date.strftime("%d/%m/%Y")],
         ["Edad:", age_str.strip()],
-        ["Periodo del informe:", f"{start_date.strftime('%d/%m/%Y')} - {end_date.strftime('%d/%m/%Y')}"]
+        ["Período del informe:", f"{start_date.strftime('%d/%m/%Y')} - {end_date.strftime('%d/%m/%Y')}"]
     ]
     
     # Tabla de encabezado
@@ -192,7 +192,7 @@ def generate_pediatric_report(baby: Baby, activities: List[Activity], start_date
     story.append(Spacer(1, 1.5*cm))
     
     # ========== RESUMEN ESTADÍSTICO ==========
-    story.append(Paragraph("RESUMEN ESTADISTICO", heading_style))
+    story.append(Paragraph("RESUMEN ESTADÍSTICO", heading_style))
     story.append(Spacer(1, 0.3*cm))
     
     # Calcular estadísticas
@@ -217,11 +217,11 @@ def generate_pediatric_report(baby: Baby, activities: List[Activity], start_date
     days_count = max(1, (end_date - start_date).days + 1)
     
     stats_data = [
-        ["Metrica", "Total", "Promedio Diario"],
+        ["Métrica", "Total", "Promedio Diario"],
         ["Tomas de alimento", str(feeding_count), f"{feeding_count/days_count:.1f}"],
         ["Cantidad total (ml)", f"{feeding_total_ml:.0f} ml", f"{feeding_total_ml/days_count:.0f} ml"],
-        ["Horas de sueno", f"{sleep_total_hours:.1f}h", f"{sleep_total_hours/days_count:.1f}h"],
-        ["Cambios de panal", str(diaper_count), f"{diaper_count/days_count:.1f}"],
+        ["Horas de sueño", f"{sleep_total_hours:.1f}h", f"{sleep_total_hours/days_count:.1f}h"],
+        ["Cambios de pañal", str(diaper_count), f"{diaper_count/days_count:.1f}"],
         ["Registros de salud", str(health_count), f"{health_count/days_count:.1f}"],
     ]
     
@@ -258,14 +258,14 @@ def generate_pediatric_report(baby: Baby, activities: List[Activity], start_date
     # ========== DETALLE DE ALIMENTACIÓN ==========
     feeding_activities = [a for a in activities if a.type == "feeding"]
     if feeding_activities:
-        story.append(Paragraph("DETALLE DE ALIMENTACION", heading_style))
+        story.append(Paragraph("DETALLE DE ALIMENTACIÓN", heading_style))
         story.append(Spacer(1, 0.3*cm))
         
         data = [['Fecha/Hora', 'Tipo', 'Cantidad', 'Notas']]
         
         for activity in feeding_activities[:15]:
             feed_type = activity.data.get('type', 'bottle') if activity.data else 'bottle'
-            type_label = 'Biberon' if feed_type == 'bottle' else 'Pecho'
+            type_label = 'Biberón' if feed_type == 'bottle' else 'Pecho'
             quantity = f"{activity.data.get('quantity_ml', 'N/A')} ml" if activity.data else 'N/A'
             notes = activity.notes[:35] + '...' if activity.notes and len(activity.notes) > 35 else (activity.notes or '-')
             
@@ -307,10 +307,10 @@ def generate_pediatric_report(baby: Baby, activities: List[Activity], start_date
     
     # ========== DETALLE DE SUEÑO ==========
     if sleep_activities:
-        story.append(Paragraph("DETALLE DE SUENO", heading_style))
+        story.append(Paragraph("DETALLE DE SUEÑO", heading_style))
         story.append(Spacer(1, 0.3*cm))
         
-        data = [['Fecha/Hora', 'Duracion', 'Notas']]
+        data = [['Fecha/Hora', 'Duración', 'Notas']]
         
         for activity in sleep_activities[:15]:
             duration = f"{activity.data.get('duration_hours', 'N/A')}h" if activity.data else 'N/A'
@@ -363,7 +363,7 @@ def generate_pediatric_report(baby: Baby, activities: List[Activity], start_date
             details = []
             if activity.data:
                 if 'temperature' in activity.data:
-                    details.append(f"Temp: {activity.data['temperature']}C")
+                    details.append(f"Temp: {activity.data['temperature']}°C")
                 if 'medication' in activity.data:
                     details.append(f"Med: {activity.data['medication']}")
                 if 'dosage' in activity.data:
@@ -379,7 +379,7 @@ def generate_pediatric_report(baby: Baby, activities: List[Activity], start_date
             
             data.append([
                 activity.timestamp.strftime('%d/%m %H:%M'),
-                'Consulta' if activity.type == 'medical' else 'Medicacion',
+                'Consulta' if activity.type == 'medical' else 'Medicación',
                 detail_str if detail_str else notes
             ])
         
@@ -420,11 +420,11 @@ def generate_pediatric_report(baby: Baby, activities: List[Activity], start_date
         for activity in activities_with_notes[:8]:
             date_str = activity.timestamp.strftime('%d/%m/%Y %H:%M')
             type_labels = {
-                'feeding': 'Alimentacion',
-                'sleep': 'Sueno',
-                'diaper': 'Panal',
+                'feeding': 'Alimentación',
+                'sleep': 'Sueño',
+                'diaper': 'Pañal',
                 'health': 'Salud',
-                'medical': 'Medico'
+                'medical': 'Médico'
             }
             type_label = type_labels.get(activity.type, activity.type)
             
@@ -451,7 +451,7 @@ def generate_pediatric_report(baby: Baby, activities: List[Activity], start_date
     story.append(Spacer(1, 1*cm))
     
     footer_data = [[
-        f"Informe generado el {datetime.now().strftime('%d/%m/%Y a las %H:%M')} | BabyCare - Aplicacion de seguimiento infantil",
+        f"Informe generado el {datetime.now().strftime('%d/%m/%Y a las %H:%M')} | BabyCare - Aplicación de seguimiento infantil",
     ]]
     
     footer_table = Table(footer_data, colWidths=[15*cm])
@@ -467,7 +467,7 @@ def generate_pediatric_report(baby: Baby, activities: List[Activity], start_date
     ]))
     story.append(footer_table)
     
-    # ========== CONSTRUIR PDF CON CANVAS PERSONALIZADO ==========
+
     doc.build(story, canvasmaker=NumberedCanvas)
     buffer.seek(0)
     
