@@ -48088,7 +48088,8 @@ n=A.aj(["Content-Type","application/json"],o,o)
 s=3
 return A.x(A.zn(p,B.ax.hA(A.aj(["email",b,"password",d,"name",c],o,o)),n),$async$Ef)
 case 3:m=f
-if(m.b===200){q=B.ax.bY(0,A.jY(A.jU(m.e)).bY(0,m.w))
+p=m.b
+if(p===200||p===201){q=B.ax.bY(0,A.jY(A.jU(m.e)).bY(0,m.w))
 s=1
 break}else throw A.e(A.cf("Error en registro: "+m.gf9(0)))
 case 1:return A.F(q,r)}})
@@ -48223,7 +48224,8 @@ l.n(0,"birth_date",a.nR().split("T")[0])
 s=4
 return A.x(A.zn(m,B.ax.hA(l),k),$async$w8)
 case 4:o=d
-if(o.b===200){q=B.ax.bY(0,A.jY(A.jU(o.e)).bY(0,o.w))
+m=o.b
+if(m===200||m===201){q=B.ax.bY(0,A.jY(A.jU(o.e)).bY(0,o.w))
 s=1
 break}else throw A.e(A.cf("Error al crear beb\xe9: "+o.gf9(0)))
 case 1:return A.F(q,r)}})
@@ -48385,7 +48387,8 @@ m=A.aj(["Content-Type","application/json","Authorization","Bearer "+A.m(p)],n,n)
 s=3
 return A.x(A.zn(o,B.ax.hA(A.aj(["email",b],n,n)),m),$async$vF)
 case 3:l=d
-if(l.b!==200)throw A.e(A.cf("Error al a\xf1adir cuidador: "+l.gf9(0)))
+o=l.b
+if(o!==200&&o!==201)throw A.e(A.cf("Error al a\xf1adir cuidador: "+l.gf9(0)))
 return A.F(null,r)}})
 return A.G($async$vF,r)},
 xO(a,b){return this.az1(a,b)},
@@ -48398,7 +48401,8 @@ o=t.N
 s=3
 return A.x(A.aL3(A.dh(u.m+a+"/caregivers/"+b,0,null),A.aj(["Content-Type","application/json","Authorization","Bearer "+A.m(p)],o,o)),$async$xO)
 case 3:n=d
-if(n.b!==200)throw A.e(A.cf("Error al eliminar cuidador: "+n.gf9(0)))
+o=n.b
+if(o!==200&&o!==204)throw A.e(A.cf("Error al eliminar cuidador: "+n.gf9(0)))
 return A.F(null,r)}})
 return A.G($async$xO,r)}}
 A.e_.prototype={

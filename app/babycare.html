@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BabyCare - Banner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .banner {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #6BA3E8 0%, #5B93D8 100%);
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .logo {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        h1 {
+            color: white;
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.95);
+            font-size: 24px;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .content {
+            padding: 50px 40px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .feature {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+        
+        .feature h3 {
+            color: #2C3E50;
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .feature p {
+            color: #5A6C7D;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .tech-stack {
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 20px;
+            margin-top: 30px;
+        }
+        
+        .tech-stack h2 {
+            text-align: center;
+            color: #2C3E50;
+            font-size: 32px;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .badge:hover {
+            transform: scale(1.1);
+        }
+        
+        .footer {
+            background: #2C3E50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            font-size: 16px;
+        }
+        
+        .footer strong {
+            color: #6BA3E8;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <div class="header">
+            <div class="logo">🍼</div>
+            <h1>BabyCare</h1>
+            <p class="subtitle">Aplicación de Gestión y Seguimiento para el Cuidado Infantil</p>
+        </div>
+        
+        <div class="content">
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">📊</div>
+                    <h3>Estadísticas</h3>
+                    <p>Visualiza gráficas y análisis detallados del cuidado de tu bebé</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">🤖</div>
+                    <h3>IA Integrada</h3>
+                    <p>Predicciones inteligentes y recomendaciones personalizadas</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">👥</div>
+                    <h3>Multi-Cuidador</h3>
+                    <p>Sincronización en tiempo real entre todos los cuidadores</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">📄</div>
+                    <h3>Informes PDF</h3>
+                    <p>Genera reportes profesionales para tu pediatra</p>
+                </div>
+            </div>
+            
+            <div class="tech-stack">
+                <h2>🛠️ Stack Tecnológico</h2>
+                <div class="tech-badges">
+                    <span class="badge">Flutter </span>
+                    <span class="badge">FastAPI</span>
+                    <span class="badge">PostgreSQL </span>
+                    <span class="badge">Python </span>
+                    <span class="badge">Machine Learning</span>
+                    <span class="badge">JWT + Argon2</span>
+                    <span class="badge">ReportLab</span>
+                    <span class="badge">Render</span>
+                    <span class="badge">Supabase</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>TFG - Desarrollo de Aplicaciones Multiplataforma</strong></p>
+            <p>Adrián Carretero Gutiérrez • IES Ágora • 2025</p>
+        </div>
+    </div>
+</body>
+</html>
